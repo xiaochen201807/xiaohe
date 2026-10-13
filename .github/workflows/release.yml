@@ -4,9 +4,9 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version to build (e.g. 1.2.3)'
+        description: 'Version to build (e.g. 1.2.4)'
         required: true
-        default: '1.2.3'
+        default: '1.2.4'
   push:
     tags:
       - 'v*'
@@ -66,6 +66,20 @@ jobs:
 
           & 'core-bin\aether.exe' --version
           Get-ChildItem 'core-bin' -Recurse -File | Select-Object FullName, Length
+
+      - name: Fetch Wintun runtime
+        shell: pwsh
+        run: |
+          $version = '0.14.1'
+          $zip = Join-Path $env:RUNNER_TEMP "wintun-$version.zip"
+          $tmp = Join-Path $env:RUNNER_TEMP "wintun-$version"
+          Invoke-WebRequest -Uri "https://www.wintun.net/builds/wintun-$version.zip" -OutFile $zip
+          Expand-Archive -Path $zip -DestinationPath $tmp -Force
+          $dll = Get-ChildItem $tmp -Recurse -File -Filter 'wintun.dll' | Select-Object -First 1
+          if (-not $dll) { throw 'wintun.dll not found in the official Wintun archive' }
+          New-Item -ItemType Directory -Force -Path 'core-bin' | Out-Null
+          Copy-Item $dll.FullName -Destination 'core-bin\wintun.dll' -Force
+          Get-Item 'core-bin\wintun.dll' | Select-Object FullName, Length
 
       - name: Build, package and publish
         shell: pwsh

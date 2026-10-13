@@ -2,7 +2,7 @@
 # (with -Token) publishes it as a GitHub release.
 #
 #   .\scripts\release.ps1                     # build only
-#   .\scripts\release.ps1 -Version 1.2.3
+#   .\scripts\release.ps1 -Version 1.2.4
 #   .\scripts\release.ps1 -Token <PAT>        # build + publish
 #
 # Pipeline: Build -> Stage -> Validate -> Package -> Checksum -> Release
@@ -14,7 +14,7 @@
 # need Chinese are written with an explicit UTF-8 writer below.
 
 param(
-    [string]$Version = "1.2.3",
+    [string]$Version = "1.2.4",
     [string]$Token = $env:GITHUB_TOKEN,
     [string]$Repository = $env:GITHUB_REPOSITORY
 )
@@ -67,15 +67,21 @@ try {
         if (-not (Test-Path $source)) { throw "missing Aether helper: $source" }
         Copy-Item $source (Join-Path $ptStage $helper) -Force
     }
+
+    # Native WireGuard/AWG loads the official Wintun runtime next to the GUI;
+    # keep a second copy under core-bin for the bundled WG helper layout.
+    $wintunSource = Join-Path $root "core-bin\wintun.dll"
+    if (-not (Test-Path $wintunSource)) { throw "missing Wintun runtime: $wintunSource" }
+    Copy-Item $wintunSource (Join-Path $stage "wintun.dll") -Force
+    Copy-Item $wintunSource (Join-Path $stage "core-bin\wintun.dll") -Force
     # The core ships with its own license: keep the notices at the archive root
     # where a user can actually find them, instead of buried inside the GUI.
     Copy-Item (Join-Path $root "THIRD-PARTY-NOTICES.md") (Join-Path $stage "THIRD-PARTY-NOTICES.md") -Force
     New-Item -ItemType Directory -Force -Path (Join-Path $stage "THIRD-PARTY-LICENSES") | Out-Null
     Copy-Item (Join-Path $root "THIRD-PARTY-LICENSES\*") (Join-Path $stage "THIRD-PARTY-LICENSES") -Recurse -Force
 
-    # Both binaries are pure Go (CGO_ENABLED=0, no `import "C"` anywhere), so
-    # they are statically linked and need no third-party DLLs or runtime files
-    # beside them. Nothing is added here just to make the package look bigger.
+    # The GUI and Aether core are pure Go (CGO_ENABLED=0, no `import "C"`),
+    # while Wintun and the pt helpers are deliberate upstream runtime files.
 
     Write-Utf8 (Join-Path $stage "README.txt") @"
 Xiaohe $Version
@@ -85,8 +91,10 @@ Xiaohe $Version
 目录说明
   Xiaohe.exe            图形界面（Go 编写，静态链接，无需额外运行库）
   core-bin\aether.exe   Aether Core，第三方独立进程，由界面调用
+  core-bin\wintun.dll    Wintun runtime（原生 WireGuard/AWG）
   core-bin\pt\psiphon-tunnel-core.exe  Aether Core 的 Psiphon helper
   core-bin\pt\lyrebird.exe            Aether Core 的 Tor 混淆 helper
+  wintun.dll             Wintun runtime（必须与 Xiaohe.exe 同目录）
   docs\                 项目文档
   LICENSE.txt           本软件授权与第三方声明
   THIRD-PARTY-NOTICES.md      第三方组件清单与许可证
@@ -117,6 +125,8 @@ version.json 远程控制。
     官方项目：https://github.com/CluvexStudio/Aether
     Xiaohe 不是 CluvexStudio 官方产品，与 CluvexStudio 没有官方从属、
     背书或授权关系。
+  - Wintun：官方 WireGuard/Wintun Windows 运行库 `wintun.dll`，由原生
+    WireGuard/AWG 后端加载，随包原样分发。官方项目：https://www.wintun.net/
   - 其余 Go 语言依赖（已静态链接进 Xiaohe.exe）见仓库 vendor\ 目录与
     本包内的 THIRD-PARTY-NOTICES.md。
 
@@ -133,6 +143,7 @@ $Version
   - 原生 WireGuard 缺少身份时给出明确的首次核心连接引导
   - 内置 AmneziaWG I1 伪造首包与 junk；I1 模板主要针对首包特征识别，不保证绕过所有 DPI
   - 正式包补齐官方 Aether v2.1.0 附带的 Psiphon/Tor `pt` helper，Aether → Psiphon 出口不再因漏打包而缺少运行组件
+  - 正式包补齐 Wintun 0.14.1，原生 WireGuard/AWG 不再因缺少 `wintun.dll` 无法创建虚拟网卡
   - 修复系统代理被写入死地址 127.0.0.1:1，导致所有网页打不开
   - 内置核心重装为官方 v2.1.0（SHA256 与官方一致）
   - MasqueH2 与 MIM 在当前网络下无法连接，界面如实标注
@@ -176,7 +187,9 @@ $Version
     Write-Host "[3/6] Validate" -ForegroundColor Cyan
     $required = @(
         (Join-Path $stage "Xiaohe.exe"),
+        (Join-Path $stage "wintun.dll"),
         (Join-Path $stage "core-bin\aether.exe"),
+        (Join-Path $stage "core-bin\wintun.dll"),
         (Join-Path $stage "core-bin\pt\psiphon-tunnel-core.exe"),
         (Join-Path $stage "core-bin\pt\lyrebird.exe"),
         (Join-Path $stage "README.txt"),

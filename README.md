@@ -94,8 +94,10 @@ powershell -ExecutionPolicy Bypass -File scripts\build.ps1
 ```
 Xiaohe-<版本>\
   Xiaohe.exe             ← GUI 程序（双击即用，无需安装）
+  wintun.dll              ← Wintun runtime（原生 WireGuard/AWG 必需）
   core-bin\
     aether.exe           ← Aether Core（第三方），独立进程
+    wintun.dll            ← Wintun runtime 副本
     pt\
       psiphon-tunnel-core.exe ← Aether Core 随附的 Psiphon helper
       lyrebird.exe            ← Aether Core 随附的 Tor 混淆 helper
@@ -175,6 +177,7 @@ Xiaohe 使用并随包分发第三方组件，这些组件的许可证仍然适�
 - Xiaohe 使用由 **CluvexStudio** 开发的 **Aether Core**
 - Aether Core 是**独立的第三方组件**，以独立进程 `core-bin\aether.exe` 运行
 - 官方 Aether 压缩包随附的 `core-bin\pt\` helper 也会随正式包分发，用于 Psiphon/Tor 出口
+- `wintun.dll` 会放在 GUI 同目录和 `core-bin\`，用于原生 WireGuard/AWG 虚拟网卡
 - Aether Core 的源代码采用 **GNU Affero General Public License v3.0（AGPL-3.0）**
 - Aether Core 的版权归其原作者/维护者所有
 - **Xiaohe 并不声称拥有 Aether Core 的版权**，也未修改或重新编译其源代码；

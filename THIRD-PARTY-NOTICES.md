@@ -37,6 +37,16 @@ Core or of its source code.
 Xiaohe is an independent project and is not an official CluvexStudio
 product unless explicitly stated otherwise.
 
+## Wintun
+
+The release package also contains the official Wintun Windows runtime
+(`wintun.dll`) in the application directory and under `core-bin/`. It is
+loaded by Xiaohe's native WireGuard/AWG backend and is redistributed
+unchanged. Wintun's upstream licensing and notices remain applicable.
+
+Upstream project:
+https://www.wintun.net/
+
 ### Trademark / branding
 
 Aether name, logo, branding, and related project identity belong to
