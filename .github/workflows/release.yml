@@ -4,9 +4,9 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version to build (e.g. 1.2.2)'
+        description: 'Version to build (e.g. 1.2.3)'
         required: true
-        default: '1.2.2'
+        default: '1.2.3'
   push:
     tags:
       - 'v*'
@@ -41,8 +41,8 @@ jobs:
           Write-Host "building version $v"
 
       # The core is not vendored in this repository (core-bin/ is ignored), so
-      # the runner pulls the matching official binary. Nothing here rebuilds or
-      # patches the core.
+      # the runner pulls the matching official bundle. Keep the pt helpers from
+      # that bundle: Aether uses them for its Psiphon/Tor chained exits.
       - name: Fetch official Aether core
         shell: pwsh
         run: |
@@ -54,7 +54,18 @@ jobs:
           $exe = Get-ChildItem $tmp -Recurse -Filter 'aether.exe' | Select-Object -First 1
           if (-not $exe) { throw 'aether.exe not found in the official archive' }
           Copy-Item $exe.FullName -Destination 'core-bin\aether.exe' -Force
+
+          $ptOut = 'core-bin\pt'
+          New-Item -ItemType Directory -Force -Path $ptOut | Out-Null
+          foreach ($name in @('psiphon-tunnel-core.exe', 'lyrebird.exe')) {
+            $helper = Get-ChildItem $tmp -Recurse -File -Filter $name | Select-Object -First 1
+            if (-not $helper) { throw "$name not found in the official Aether archive" }
+            Copy-Item $helper.FullName -Destination (Join-Path $ptOut $name) -Force
+            Write-Host "staged $name"
+          }
+
           & 'core-bin\aether.exe' --version
+          Get-ChildItem 'core-bin' -Recurse -File | Select-Object FullName, Length
 
       - name: Build, package and publish
         shell: pwsh

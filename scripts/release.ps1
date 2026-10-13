@@ -2,7 +2,7 @@
 # (with -Token) publishes it as a GitHub release.
 #
 #   .\scripts\release.ps1                     # build only
-#   .\scripts\release.ps1 -Version 1.2.2
+#   .\scripts\release.ps1 -Version 1.2.3
 #   .\scripts\release.ps1 -Token <PAT>        # build + publish
 #
 # Pipeline: Build -> Stage -> Validate -> Package -> Checksum -> Release
@@ -14,7 +14,7 @@
 # need Chinese are written with an explicit UTF-8 writer below.
 
 param(
-    [string]$Version = "1.2.2",
+    [string]$Version = "1.2.3",
     [string]$Token = $env:GITHUB_TOKEN,
     [string]$Repository = $env:GITHUB_REPOSITORY
 )
@@ -53,6 +53,20 @@ try {
 
     Copy-Item (Join-Path $build "Xiaohe.exe") (Join-Path $stage "Xiaohe.exe") -Force
     Copy-Item (Join-Path $root "core-bin\aether.exe") (Join-Path $stage "core-bin\aether.exe") -Force
+
+    # The official Aether Windows archive ships these helpers beside the core.
+    # They are required for the Psiphon/Tor chained exits and must stay in the
+    # same relative pt\ directory in the published package.
+    $ptSource = Join-Path $root "core-bin\pt"
+    $ptStage = Join-Path $stage "core-bin\pt"
+    $ptHelpers = @("psiphon-tunnel-core.exe", "lyrebird.exe")
+    if (-not (Test-Path $ptSource)) { throw "missing core-bin\pt: official Aether helper bundle was not staged" }
+    New-Item -ItemType Directory -Force -Path $ptStage | Out-Null
+    foreach ($helper in $ptHelpers) {
+        $source = Join-Path $ptSource $helper
+        if (-not (Test-Path $source)) { throw "missing Aether helper: $source" }
+        Copy-Item $source (Join-Path $ptStage $helper) -Force
+    }
     # The core ships with its own license: keep the notices at the archive root
     # where a user can actually find them, instead of buried inside the GUI.
     Copy-Item (Join-Path $root "THIRD-PARTY-NOTICES.md") (Join-Path $stage "THIRD-PARTY-NOTICES.md") -Force
@@ -71,6 +85,8 @@ Xiaohe $Version
 目录说明
   Xiaohe.exe            图形界面（Go 编写，静态链接，无需额外运行库）
   core-bin\aether.exe   Aether Core，第三方独立进程，由界面调用
+  core-bin\pt\psiphon-tunnel-core.exe  Aether Core 的 Psiphon helper
+  core-bin\pt\lyrebird.exe            Aether Core 的 Tor 混淆 helper
   docs\                 项目文档
   LICENSE.txt           本软件授权与第三方声明
   THIRD-PARTY-NOTICES.md      第三方组件清单与许可证
@@ -95,7 +111,7 @@ version.json 远程控制。
 
 第三方组件
   - Aether Core（CluvexStudio）：本软件内置并随包分发其官方核心二进制文件
-    aether.exe。Aether Core 是独立的第三方组件，采用 GNU Affero General
+    aether.exe 及其 pt\ helper。Aether Core 是独立的第三方组件，采用 GNU Affero General
     Public License v3.0（AGPL-3.0）；其版权与许可证归原作者 CluvexStudio
     所有。本项目仅作调用与随包分发，未修改其核心代码，也不声称拥有其版权。
     官方项目：https://github.com/CluvexStudio/Aether
@@ -116,7 +132,7 @@ $Version
   - 修复部分 Windows 环境下安装器因 Walk 工具提示注册失败而无法创建界面
   - 原生 WireGuard 缺少身份时给出明确的首次核心连接引导
   - 内置 AmneziaWG I1 伪造首包与 junk；I1 模板主要针对首包特征识别，不保证绕过所有 DPI
-  - 移除赛风（Psiphon），相关代码、资源与运行时数据全部清除
+  - 正式包补齐官方 Aether v2.1.0 附带的 Psiphon/Tor `pt` helper，Aether → Psiphon 出口不再因漏打包而缺少运行组件
   - 修复系统代理被写入死地址 127.0.0.1:1，导致所有网页打不开
   - 内置核心重装为官方 v2.1.0（SHA256 与官方一致）
   - MasqueH2 与 MIM 在当前网络下无法连接，界面如实标注
@@ -161,6 +177,8 @@ $Version
     $required = @(
         (Join-Path $stage "Xiaohe.exe"),
         (Join-Path $stage "core-bin\aether.exe"),
+        (Join-Path $stage "core-bin\pt\psiphon-tunnel-core.exe"),
+        (Join-Path $stage "core-bin\pt\lyrebird.exe"),
         (Join-Path $stage "README.txt"),
         (Join-Path $stage "LICENSE.txt"),
         (Join-Path $stage "CHANGELOG.txt"),

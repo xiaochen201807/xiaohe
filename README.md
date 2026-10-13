@@ -96,6 +96,9 @@ Xiaohe-<版本>\
   Xiaohe.exe             ← GUI 程序（双击即用，无需安装）
   core-bin\
     aether.exe           ← Aether Core（第三方），独立进程
+    pt\
+      psiphon-tunnel-core.exe ← Aether Core 随附的 Psiphon helper
+      lyrebird.exe            ← Aether Core 随附的 Tor 混淆 helper
   THIRD-PARTY-NOTICES.md ← 第三方组件清单与许可证
   THIRD-PARTY-LICENSES\  ← 第三方许可证正文
   LICENSE.txt            ← 本软件授权与第三方声明
@@ -171,6 +174,7 @@ Xiaohe 使用并随包分发第三方组件，这些组件的许可证仍然适�
 
 - Xiaohe 使用由 **CluvexStudio** 开发的 **Aether Core**
 - Aether Core 是**独立的第三方组件**，以独立进程 `core-bin\aether.exe` 运行
+- 官方 Aether 压缩包随附的 `core-bin\pt\` helper 也会随正式包分发，用于 Psiphon/Tor 出口
 - Aether Core 的源代码采用 **GNU Affero General Public License v3.0（AGPL-3.0）**
 - Aether Core 的版权归其原作者/维护者所有
 - **Xiaohe 并不声称拥有 Aether Core 的版权**，也未修改或重新编译其源代码；

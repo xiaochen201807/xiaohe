@@ -1,8 +1,8 @@
 {
   "gui": {
-    "version": "1.2.2",
-    "url": "https://github.com/xiaochen201807/xiaohe/releases/download/v1.2.2/Xiaohe-1.2.2-win-x64.zip",
-    "notes": "修复从 AWG 切回普通 WireGuard 后仍残留 native 后端导致核心未启动的问题；修复部分 Windows 环境安装器 TTM_ADDTOOL 失败；原生 WireGuard 缺少身份时增加明确引导。正式包继续内置 -tags wgtun、AmneziaWG junk 与 I1 伪造首包能力。"
+    "version": "1.2.3",
+    "url": "https://github.com/xiaochen201807/xiaohe/releases/download/v1.2.3/Xiaohe-1.2.3-win-x64.zip",
+    "notes": "修复从 AWG 切回普通 WireGuard 后仍残留 native 后端导致核心未启动的问题；修复部分 Windows 环境安装器 TTM_ADDTOOL 失败；正式包补齐官方 Aether v2.1.0 附带的 Psiphon/Tor pt helper。继续内置 -tags wgtun、AmneziaWG junk 与 I1 伪造首包能力。"
   },
   "core": {
     "version": "v2.1.0",

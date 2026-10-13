@@ -22,9 +22,12 @@ https://github.com/CluvexStudio/Aether/blob/main/LICENSE
 
 How it is used:
 The Aether Core runs as a separate process (`core-bin/aether.exe`) and is
-started and supervised by Xiaohe over a local interface. Xiaohe does not
-modify, rebuild, or relicense the Aether Core; the binary shipped in the
-release package is the upstream release binary.
+started and supervised by Xiaohe over a local interface. The official
+Windows bundle also contains the upstream helper executables
+`core-bin/pt/psiphon-tunnel-core.exe` and `core-bin/pt/lyrebird.exe`, which
+the core uses for its Psiphon/Tor exits. Xiaohe does not modify, rebuild, or
+relicense the Aether Core or these helpers; they are redistributed from the
+official Aether release bundle.
 
 The Aether Core is a separate third-party component.
 Copyright and licensing of the Aether Core remain with its respective

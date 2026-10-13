@@ -16,6 +16,8 @@ AGPL-3.0）作为网络核心组件。Xiaohe 不是 CluvexStudio 官方产品。
 ```
 Xiaohe.exe                图形界面（Go 静态链接，无需额外运行库）
 core-bin\aether.exe       Aether Core，第三方独立进程
+core-bin\pt\psiphon-tunnel-core.exe  Aether Core 随附的 Psiphon helper
+core-bin\pt\lyrebird.exe            Aether Core 随附的 Tor 混淆 helper
 docs\                     项目文档
 LICENSE.txt               本软件授权与第三方声明
 THIRD-PARTY-NOTICES.md    第三方组件清单与许可证
@@ -28,8 +30,8 @@ CHANGELOG.txt             版本变更记录
 `THIRD-PARTY-LICENSES\AETHER-AGPL-3.0.txt`。
 
 界面与核心保持分离：核心是可独立替换的进程，但通过更新包发布时二者一起
-替换，以保证版本配套。两个可执行文件均为 Go 静态编译的自包含程序，
-不需要额外的 DLL 或运行时文件。
+替换，以保证版本配套。GUI 和 Aether Core 均为 Go 静态编译；`pt\` 下的
+helper 随官方 Aether 压缩包一同分发，不需要额外下载或安装运行时文件。
 
 ### 本次更新
 
@@ -44,8 +46,9 @@ CHANGELOG.txt             版本变更记录
   组件保留其原名称、版权与许可证声明，未被重命名
 - **发布包附带第三方许可证**：新增 `THIRD-PARTY-NOTICES.md` 与
   `THIRD-PARTY-LICENSES\AETHER-AGPL-3.0.txt`，放在包内根目录
-- **移除赛风（Psiphon）**：赛风相关的模式、出口方式、界面选项、接口、日志分类、
-  进程清理逻辑以及运行时数据已全部清除，不再内置该组件
+- **补齐赛风/Tor 运行组件**：正式包现在包含官方 Aether v2.1.0 压缩包中的
+  `core-bin\pt\psiphon-tunnel-core.exe` 与 `core-bin\pt\lyrebird.exe`，修复此前
+  Action 只提取 `aether.exe` 导致 Aether → Psiphon 出口缺少 helper 的问题
 - **修复系统代理被写入死地址**：开启 PAC 时曾把「手动代理」一并写成不可用的占位
   地址 `127.0.0.1:1`，浏览器优先使用它，导致国内外网页全部打不开。现在启用 PAC 时
   手动代理保持关闭
