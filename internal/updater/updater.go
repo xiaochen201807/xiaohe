@@ -30,7 +30,7 @@ import (
 
 const (
 	// ManifestURL is version.json at the root of the publishing repo.
-	ManifestURL = "https://raw.githubusercontent.com/hezhanleiok/aether/main/version.json"
+	ManifestURL = "https://raw.githubusercontent.com/xiaochen201807/xiaohe/main/version.json"
 	// CoreReleaseAPI is the official Aether core release feed; the pinned tag
 	// is appended when resolving which core to install.
 	CoreReleaseAPI = "https://api.github.com/repos/CluvexStudio/Aether/releases"

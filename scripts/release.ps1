@@ -2,7 +2,7 @@
 # (with -Token) publishes it as a GitHub release.
 #
 #   .\scripts\release.ps1                     # build only
-#   .\scripts\release.ps1 -Version 1.2.0
+#   .\scripts\release.ps1 -Version 1.2.1
 #   .\scripts\release.ps1 -Token <PAT>        # build + publish
 #
 # Pipeline: Build -> Stage -> Validate -> Package -> Checksum -> Release
@@ -14,8 +14,9 @@
 # need Chinese are written with an explicit UTF-8 writer below.
 
 param(
-    [string]$Version = "1.1.3",
-    [string]$Token = $env:GITHUB_TOKEN
+    [string]$Version = "1.2.1",
+    [string]$Token = $env:GITHUB_TOKEN,
+    [string]$Repository = $env:GITHUB_REPOSITORY
 )
 
 $ErrorActionPreference = "Stop"
@@ -218,6 +219,10 @@ $Version
         return
     }
 
+    if (-not $Repository) {
+        throw "Repository must be set as owner/name when publishing a release"
+    }
+
     Write-Host "[6/6] Release" -ForegroundColor Cyan
     # The proxy is optional and comes from the environment: a dev box behind a
     # local proxy sets HTTPS_PROXY, while a CI runner has direct egress and
@@ -235,7 +240,7 @@ $Version
     # Splatting so the proxy key is only present when one is configured -
     # passing -Proxy $null is an error.
     $post = @{
-        Uri         = "https://api.github.com/repos/hezhanleiok/aether/releases"
+        Uri         = "https://api.github.com/repos/$Repository/releases"
         Method      = 'Post'
         Headers     = $hdr
         ContentType = "application/json; charset=utf-8"
@@ -247,7 +252,7 @@ $Version
     foreach ($f in @((Split-Path $zip -Leaf), (Split-Path $setup -Leaf), "SHA256SUMS.txt")) {
         $bytes = [System.IO.File]::ReadAllBytes((Join-Path $build $f))
         $put = @{
-            Uri         = "https://uploads.github.com/repos/hezhanleiok/aether/releases/$($rel.id)/assets?name=$f"
+            Uri         = "https://uploads.github.com/repos/$Repository/releases/$($rel.id)/assets?name=$f"
             Method      = 'Post'
             Headers     = $hdr
             ContentType = "application/octet-stream"
