@@ -766,7 +766,7 @@ const SCHEMA = [
   {
     name: '网络', name_en: 'Network', icon: 'i-wifi', rows: [
       { k: 'mode', type: 'select', label: '连接方式', label_en: 'Routing mode', options: [['full_vpn', '全局 VPN'], ['proxy', '全局代理'], ['split', '规则分流'], ['direct', '直连']] },
-      { k: 'native_wireguard', type: 'switch', label: '原生 WireGuard 加速', label_en: 'Native WireGuard boost', hint: 'wireguard-go + 虚拟网卡（内核速度）替代用户态核心，需管理员权限；仅 WG/WARP 模式生效', hint_en: 'wireguard-go + wintun at kernel speed; elevation required; WG/WARP modes only' },
+      { k: 'native_wireguard', type: 'switch', label: '原生 WireGuard 加速', label_en: 'Native WireGuard boost', hint: 'wireguard-go + 虚拟网卡（内核速度）替代用户态核心，需管理员权限；首次使用请先关闭此项，用普通 WG/WARP 核心模式成功连接一次生成身份', hint_en: 'wireguard-go + wintun at kernel speed; elevation required; first connect once with native disabled so the core can provision the WARP identity' },
       { k: 'stacked_wireguard', type: 'switch', label: 'Warp-in-Warp 双层隧道', label_en: 'Warp-in-Warp stacked tunnel', hint: '外层 WARP 隧道承载内层 WARP 隧道，出口为二次注册的新身份；需开启原生 WireGuard 且已注册内层账号', hint_en: 'An outer WARP tunnel carries an inner one; egress is a freshly registered identity; needs Native WireGuard + a minted inner account' },
       { k: 'ip_stack', type: 'select', label: 'IP 协议栈', label_en: 'IP stack', hint: 'IPv4/IPv6 扫描策略', hint_en: 'IPv4/IPv6 scanning policy', options: [['ipv4', '仅 IPv4'], ['ipv6', '仅 IPv6'], ['dual', 'IPv4 + IPv6']] },
       { k: 'socks_port', type: 'number', label: '本地 SOCKS5 端口', label_en: 'Local SOCKS5 port' },

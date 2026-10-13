@@ -33,6 +33,13 @@ CHANGELOG.txt             版本变更记录
 
 ### 本次更新
 
+- **修复 AWG 切回普通 WireGuard 后仍走 native 后端**：协议切换现在会同步清理
+  native/stacked 状态，普通核心模式可以正常启动并生成原生 WireGuard 所需的身份文件
+- **修复部分 Windows 环境安装器界面创建失败**：Walk 的可选工具提示注册失败不再阻断安装器
+- **内置 AmneziaWG I1 伪造首包**：支持 quic/dns/stun/sip/random 等 profile，按
+  `I1 → junk → WireGuard 握手` 顺序发送；这些 profile 主要针对首包外形识别，不能保证绕过所有 DPI
+- **原生 WireGuard 缺少身份时提供明确引导**：首次使用应先关闭 native，用普通 WG/WARP
+  核心模式成功连接一次，或导入完整的 `wgtun-override.conf`
 - **产品名称统一为 Xiaohe**：旧产品名停止使用。Aether Core 作为第三方
   组件保留其原名称、版权与许可证声明，未被重命名
 - **发布包附带第三方许可证**：新增 `THIRD-PARTY-NOTICES.md` 与

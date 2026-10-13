@@ -30,7 +30,7 @@ func TestProtocolsHasAWGInsteadOfH2(t *testing.T) {
 		t.Fatalf("awg mode = %s, want %s (AWG is WireGuard + obfuscation)", awg.Mode, config.ModeWireGuard)
 	}
 	if awg.Note == "" {
-		t.Fatal("awg entry must carry an honest note (only junk is implemented, I1 is not)")
+		t.Fatal("awg entry must carry an honest scope note")
 	}
 }
 
@@ -64,7 +64,14 @@ func TestApplyProtocolAWG(t *testing.T) {
 		t.Fatalf("ProtocolKey after AWG = %s, want awg", got)
 	}
 
+	s.StackedWireGuard = true
 	back := applyProtocol(s, wg)
+	if back.NativeWireGuard {
+		t.Fatal("switching back to WireGuard must clear the native backend flag")
+	}
+	if back.StackedWireGuard {
+		t.Fatal("switching back to WireGuard must clear stale stacked mode")
+	}
 	if back.AWGJunk {
 		t.Fatal("switching back to WireGuard must turn the junk off (baseline)")
 	}

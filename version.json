@@ -1,8 +1,8 @@
 {
   "gui": {
-    "version": "1.2.1",
-    "url": "https://github.com/xiaochen201807/xiaohe/releases/download/v1.2.1/Xiaohe-1.2.1-win-x64.zip",
-    "notes": "移除赛风(Psiphon)；内置核心重装为官方 v2.1.0 并校验 SHA256；修复系统代理被写入死地址导致全部网页打不开。增强连接稳定性：修复连接建立后测速热切换导致的偶发断连，端点数据面失败时自动回退候选，并修复失效端点被反复优先选中的问题。WireGuard / Gool / MasqueH3 实测可用，MasqueH2 与 MIM 在当前网络下如实标注为可能不可用"
+    "version": "1.2.2",
+    "url": "https://github.com/xiaochen201807/xiaohe/releases/download/v1.2.2/Xiaohe-1.2.2-win-x64.zip",
+    "notes": "修复从 AWG 切回普通 WireGuard 后仍残留 native 后端导致核心未启动的问题；修复部分 Windows 环境安装器 TTM_ADDTOOL 失败；原生 WireGuard 缺少身份时增加明确引导。正式包继续内置 -tags wgtun、AmneziaWG junk 与 I1 伪造首包能力。"
   },
   "core": {
     "version": "v2.1.0",

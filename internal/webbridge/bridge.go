@@ -396,8 +396,19 @@ func applyProtocol(s config.Settings, p Protocol) config.Settings {
 	// other entry turns the junk back off — leaving it on would make the
 	// "WireGuard" baseline silently obfuscated and every A/B meaningless.
 	s.AWGJunk = p.AWG
-	if p.Native {
-		s.NativeWireGuard = true
+	// The protocol picker owns the native/AWG baseline. Previously AWG set
+	// NativeWireGuard=true, but switching back to plain WireGuard only cleared
+	// AWGJunk/AWGI1 and left the native flag behind. The UI then looked like
+	// ordinary WireGuard while Connect() still bypassed the core and tried to
+	// load a pre-provisioned aether.toml identity. That made a first switch
+	// back to plain WireGuard fail with "no WireGuard identity" forever.
+	// Explicitly mirror the picker choice; users who want native plain WG can
+	// turn the separate native switch back on afterwards.
+	s.NativeWireGuard = p.Native
+	if !p.Native {
+		// Stacked WG is also a native-only transport. Do not let a stale
+		// stacked toggle keep dispatching a non-WG protocol through wgtun.
+		s.StackedWireGuard = false
 	}
 	if p.AWG {
 		if s.JunkCount <= 0 {

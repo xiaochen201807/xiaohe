@@ -100,10 +100,9 @@ type Settings struct {
 	// obfuscation, not a different transport, so it only exists on the native
 	// backend (the core's netstack cannot send them). OFF = WireGuard baseline.
 	//
-	// Honest scope: only the junk half of AmneziaWG is implemented. The fake
-	// first packet (I1, e.g. a canned QUIC Initial) is NOT — and upstream
-	// tooling (warpscout) reports that I1, not the junk sizes, is what usually
-	// gets a connection past DPI. Treat this as "junk on/off", not as full AWG.
+	// Honest scope: the junk half and the I1 fake first packet are implemented.
+	// Generated I1 profiles are header-shape packets, not fully validated
+	// protocol sessions; this is not a guarantee against every DPI.
 	AWGJunk bool `json:"awg_junk"`
 
 	// Junk parameters used when AWGJunk is on. 0 = use the defaults below

@@ -130,12 +130,18 @@ func InitWidget(widget Widget, parent Window, className string, style, exStyle u
 func (wb *WidgetBase) init(widget Widget) error {
 	wb.graphicsEffects = newWidgetGraphicsEffectList(wb)
 
-	tt, err := wb.group.CreateToolTip()
-	if err != nil {
-		return err
-	}
-	if err := tt.AddTool(wb.window.(Widget)); err != nil {
-		return err
+	// Tooltips are optional UI sugar. On some Windows builds the common
+	// controls tooltip rejects TTM_ADDTOOL for a newly-created child window;
+	// propagating that failure aborts the entire declarative window (the
+	// installer used to fail with "TTM_ADDTOOL failed"). Keep the widget
+	// usable and discard the tooltip control when registration is rejected.
+	hadToolTip := wb.group.ToolTip() != nil
+	if tt, err := wb.group.CreateToolTip(); err == nil {
+		if err := tt.AddTool(wb.window.(Widget)); err != nil && !hadToolTip {
+			tt.Dispose()
+			wb.group.toolTip = nil
+			wb.group.ignore(-1)
+		}
 	}
 
 	wb.toolTipTextProperty = NewProperty(

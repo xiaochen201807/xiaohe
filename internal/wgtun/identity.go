@@ -54,7 +54,7 @@ func LoadIdentity(configDir, endpointOverride string) (Config, error) {
 	}
 
 	if base.PrivateKey == "" || base.PeerPublicKey == "" {
-		return Config{}, fmt.Errorf("wgtun: no WireGuard identity (both aether.toml and wgtun-override.conf lack PrivateKey/PublicKey)")
+		return Config{}, fmt.Errorf("wgtun: no WireGuard identity (both aether.toml and wgtun-override.conf lack PrivateKey/PublicKey); first connect once with native WireGuard disabled so the core can provision %s, or provide a complete wgtun-override.conf", filepath.Join(configDir, "aether.toml"))
 	}
 	if base.IPv4 == "" {
 		return Config{}, fmt.Errorf("wgtun: no tunnel IPv4 address (both aether.toml and wgtun-override.conf lack one)")

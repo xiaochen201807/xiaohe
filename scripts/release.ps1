@@ -2,7 +2,7 @@
 # (with -Token) publishes it as a GitHub release.
 #
 #   .\scripts\release.ps1                     # build only
-#   .\scripts\release.ps1 -Version 1.2.1
+#   .\scripts\release.ps1 -Version 1.2.2
 #   .\scripts\release.ps1 -Token <PAT>        # build + publish
 #
 # Pipeline: Build -> Stage -> Validate -> Package -> Checksum -> Release
@@ -14,7 +14,7 @@
 # need Chinese are written with an explicit UTF-8 writer below.
 
 param(
-    [string]$Version = "1.2.1",
+    [string]$Version = "1.2.2",
     [string]$Token = $env:GITHUB_TOKEN,
     [string]$Repository = $env:GITHUB_REPOSITORY
 )
@@ -112,6 +112,10 @@ version.json 远程控制。
 
     Write-Utf8 (Join-Path $stage "CHANGELOG.txt") @"
 $Version
+  - 修复从 AWG 切回普通 WireGuard 后仍残留 native 后端，导致核心未启动且找不到 aether.toml
+  - 修复部分 Windows 环境下安装器因 Walk 工具提示注册失败而无法创建界面
+  - 原生 WireGuard 缺少身份时给出明确的首次核心连接引导
+  - 内置 AmneziaWG I1 伪造首包与 junk；I1 模板主要针对首包特征识别，不保证绕过所有 DPI
   - 移除赛风（Psiphon），相关代码、资源与运行时数据全部清除
   - 修复系统代理被写入死地址 127.0.0.1:1，导致所有网页打不开
   - 内置核心重装为官方 v2.1.0（SHA256 与官方一致）

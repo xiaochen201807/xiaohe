@@ -43,13 +43,12 @@ var Protocols = []Protocol{
 	// reset with os error 10054/10060 with fragmentation on and off alike),
 	// while the WireGuard-class transports do connect here.
 	//
-	// Scope note (honest, from the code): only the junk half is implemented —
-	// Jc/Jmin/Jmax. AmneziaWG's fake first packet (I1) is NOT, and warpscout
-	// reports that I1, not the junk sizes, is what usually gets a connection
-	// past a filter. Expect "handshake no longer opens with a bare 148-byte
-	// initiation", not "unblockable".
+	// Scope note (honest, from the code): junk and the I1 fake first packet are
+	// implemented, but the generated profiles are packet shapes rather than
+	// fully validated QUIC/DNS/STUN sessions. Expect help against header-shape
+	// classification, not an "unblockable" guarantee.
 	{Key: "awg", Label: "AWG", Mode: string(config.ModeWireGuard), Proto: "wg", Native: true, AWG: true,
-		Note: "AmneziaWG 混淆：仅实现 junk（Jc/Jmin/Jmax），I1 伪装首包未实现；需要 native 后端 + 管理员权限"},
+		Note: "AmneziaWG 混淆：含 junk 与 I1 首包特征；需要 native 后端 + 管理员权限"},
 	{Key: "h3", Label: "MasqueH3", Mode: string(config.ModeMasqueH3), Proto: "masque"},
 	// MIM's inner hop rides QUIC by default, and that is the first thing DPI
 	// breaks: measured on this network, every inner edge closed with QUIC code

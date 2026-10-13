@@ -29,7 +29,7 @@ import (
 )
 
 // Version is reported on the about page.
-const Version = "1.2.1"
+const Version = "1.2.2"
 
 // guiFS holds the embedded frontend for this build.
 var guiFS fs.FS
